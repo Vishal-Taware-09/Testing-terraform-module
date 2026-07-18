@@ -80,16 +80,9 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# data "terraform_remote_state" "db" {
-#   backend = "s3"
-
-#   config = {
-#     bucket = var.db_remote_state_bucket
-#     key    = var.db_remote_state_key
-#     region = "ap-south-1"
-#   }
-
-# }
+data "aws_db_instance" "database" {
+  db_instance_identifier = var.db_instance_name
+}
 
 resource "aws_lb" "example" {
 
