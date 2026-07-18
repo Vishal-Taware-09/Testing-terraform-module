@@ -48,3 +48,8 @@ variable "max_size" {
   description = "The maximum number of EC2 Instances in the ASG"
   type        = number
 }
+variable "db_instance_name" {
+  description = "I'm using the instance name here because rest statefile of this module and database is different "
+  type        = string
+  default     = "terraform-07b6d0414233cb365e2e1dea19"
+}
