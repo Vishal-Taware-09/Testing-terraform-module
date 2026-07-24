@@ -42,7 +42,7 @@ resource "aws_autoscaling_group" "example" {
     propagate_at_launch = true
   }
   dynamic "tag" {
-    for_each = values(var.custom_tag)
+    for_each = var.custom_tag
     content {
       key                 = tag.key
       value               = tag.value
