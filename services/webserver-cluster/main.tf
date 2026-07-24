@@ -8,12 +8,12 @@ resource "aws_launch_template" "example" {
   vpc_security_group_ids = [aws_security_group.instance.id]
 
   # User data must be base64 encoded for the launch template
-  user_data = templatefile("${path.module}/user-data.sh", {
-    server_port = var.server_port
-    # Use the attributes from the AWS data source
-    db_address = data.aws_db_instance.database.address
-    db_port    = data.aws_db_instance.database.port
-  })
+  # user_data = templatefile("${path.module}/user-data.sh", {
+  #   server_port = var.server_port
+  #   # Use the attributes from the AWS data source
+  #   db_address = data.aws_db_instance.database.address
+  #   db_port    = data.aws_db_instance.database.port
+  # })
 
   # Launch Templates don't use lifecycle here, but the ASG using this 
   # template should have the lifecycle block.
@@ -40,6 +40,14 @@ resource "aws_autoscaling_group" "example" {
     key                 = "Name"
     value               = "${var.cluster_name}-instance"
     propagate_at_launch = true
+  }
+  dynamic "tag" {
+    for_each = values(var.custom_tag)
+    content {
+      key                 = tag.key
+      value               = tag.value
+      propagate_at_launch = true
+    }
   }
 }
 
@@ -81,9 +89,9 @@ data "aws_ami" "ubuntu" {
 }
 
 # In your module's main.tf
-data "aws_db_instance" "database" {
-  db_instance_identifier = var.db_instance_name
-}
+# data "aws_db_instance" "database" {
+#   db_instance_identifier = var.db_instance_name
+# }
 
 resource "aws_lb" "example" {
 
