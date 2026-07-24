@@ -57,5 +57,6 @@ variable "max_size" {
 
 variable "custom_tag" {
   description = "Adding custom tags to auto scaling groups "
-  type        = string
+  type        = map(string)
+  default     = {}
 }
