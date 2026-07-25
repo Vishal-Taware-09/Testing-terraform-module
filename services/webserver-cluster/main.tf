@@ -87,10 +87,6 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# In your module's main.tf
-# data "aws_db_instance" "database" {
-#   db_instance_identifier = var.db_instance_name
-# }
 
 data "terraform_remote_state" "db" {
   backend = "s3"
