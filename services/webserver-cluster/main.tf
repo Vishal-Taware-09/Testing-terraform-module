@@ -8,12 +8,11 @@ resource "aws_launch_template" "example" {
   vpc_security_group_ids = [aws_security_group.instance.id]
 
   # User data must be base64 encoded for the launch template
-  # user_data = templatefile("${path.module}/user-data.sh", {
-  #   server_port = var.server_port
-  #   # Use the attributes from the AWS data source
-  #   db_address = data.aws_db_instance.database.address
-  #   db_port    = data.aws_db_instance.database.port
-  # })
+  user_data = templatefile("${path.module}/user-data.sh", {
+    server_port = var.server_port
+    db_address  = data.terraform_remote_state.db.outputs.address
+    db_port     = data.terraform_remote_state.db.outputs.port
+  })
 
   # Launch Templates don't use lifecycle here, but the ASG using this 
   # template should have the lifecycle block.
@@ -92,6 +91,16 @@ data "aws_ami" "ubuntu" {
 # data "aws_db_instance" "database" {
 #   db_instance_identifier = var.db_instance_name
 # }
+
+data "terraform_remote_state" "db" {
+  backend = "s3"
+
+  config = {
+    bucket = var.db_remote_state_bucket
+    key    = var.db_remote_state_key
+    region = "us-east-2"
+  }
+}
 
 resource "aws_lb" "example" {
 
